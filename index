@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RaulBike - Tienda en Línea</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #d8fef4;
+        }
+        header {
+            background: #50cdac;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        section {
+            padding: 20px;
+            text-align: center;
+        }
+        .productos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .producto {
+            background: #b0ebd4;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .producto:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .producto img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        button:hover {
+            background: #2dc78a;
+        }
+        footer {
+            background: #2dc79e;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .carrito {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff5c8d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        .carrito-details {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            background: white;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .carrito-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .carrito-details ul li {
+            padding: 5px;
+        }
+        .carrito-details .total {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .filter-section {
+            text-align: center;
+            margin: 20px;
+        }
+        .filter-section select, .filter-section input {
+            padding: 10px;
+            margin: 5px;
+            font-size: 1em;
+        }
+        .rating {
+            display: flex;
+            justify-content: center;
+        }
+        .star {
+            color: gold;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>RaulBike</h1>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="inicio">
+        <h2>Bienvenido a RaulBike</h2>
+        <p>Tu tienda en línea de bicicletas armadas y piezas de calidad.</p>
+    </section>
+    
+    <section id="productos">
+        <h2>Nuestros Productos</h2>
+        
+        <div class="filter-section">
+            <select id="filterPrice">
+                <option value="all">Todos los productos</option>
+                <option value="lowToHigh">Precio: Bajo a Alto</option>
+                <option value="highToLow">Precio: Alto a Bajo</option>
+            </select>
+            <input type="text" id="searchProduct" placeholder="Buscar producto...">
+        </div>
+        
+        <div class="productos-container" id="productosContainer">
+            <!-- Productos cargados dinámicamente aquí -->
+        </div>
+    </section>
+    
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Tu nombre" required><br><br>
+            <input type="email" id="email" placeholder="Tu correo" required><br><br>
+            <textarea id="message" placeholder="Tu mensaje" required></textarea><br><br>
+            <button type="submit">Enviar mensaje</button>
+        </form>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 RaulBike - Todos los derechos reservados</p>
+    </footer>
+    
+    <div class="carrito" onclick="toggleCarritoDetails()">Carrito (0)</div>
+    <div class="carrito-details" id="carritoDetails">
+        <ul id="carritoList"></ul>
+        <p class="total">Total: $0</p>
+    </div>
+    
+    <script>
+        const productos = [
+            { id: 1, name: "Trek Marlin 7", price: 15000, image: "https://tse1.mm.bing.net/th?id=OIP.S5bny-Wt9O8fZ2rtc1UugQHaEK&pid=Api", rating: 4 },
+            { id: 2, name: "Specialized Allez", price: 18200, image: "https://tse1.mm.bing.net/th?id=OIP.Ugan_8NzGMi_66qT7nE_iQHaE8&pid=Api", rating: 5 },
+            { id: 3, name: "Cannondale Quick 4", price: 15900, image: "https://tse2.mm.bing.net/th?id=OIP.5nm7TbYwpc0X0JfA_y2ZJgHaEM&pid=Api", rating: 3 },
+            { id: 4, name: "Giant Explore E+", price: 23500, image: "https://tse2.mm.bing.net/th?id=OIP.wcn-IGbNLK8Dav5Z68a2nAHaG3&pid=Api", rating: 5 }
+        ];
+
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        let total = carrito.reduce((acc, item) => acc + item.price, 0);
+        
+        function cargarProductos() {
+            const container = document.getElementById("productosContainer");
+            container.innerHTML = '';
+            productos.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('producto');
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>Precio: $${product.price}</p>
+                    <div class="rating">${getStars(product.rating)}</div>
+                    <button onclick="agregarAlCarrito(${product.id})">Comprar</button>
+                `;
+                container.appendChild(productDiv);
+            });
+        }
+
+        function getStars(rating) {
+            return [...Array(5)].map((_, index) => {
+                return `<span class="star" onclick="calificarProducto(${index + 1})">&#9733;</span>`;
+            }).join('');
+        }
+
+        function agregarAlCarrito(productId) {
+            const producto = productos.find(p => p.id === productId);
+            carrito.push(producto);
+            total += producto.price;
+            actualizarCarrito();
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+        }
+
+        function actualizarCarrito() {
+            const carritoList = document.getElementById("carritoList");
+            const carritoDetails = document.getElementById("carritoDetails");
+            const carritoButton = document.querySelector(".carrito");
+
+            carritoList.innerHTML = '';
+            carrito.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - $${item.price}`;
+                carritoList.appendChild(li);
+            });
+
+            const totalElem = document.querySelector('.total');
+            totalElem.textContent = `Total: $${total}`;
+
+            carritoButton.textContent = `Carrito (${carrito.length})`;
+            carritoDetails.style.display = carrito.length > 0 ? 'block' : 'none';
+        }
+
+        function toggleCarritoDetails() {
+            const carritoDetails = document.getElementById("carritoDetails");
+            carritoDetails.style.display = carritoDetails.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.getElementById("contactForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Mensaje enviado!");
+        });
+
+        document.getElementById('filterPrice').addEventListener('change', function() {
+            const filterValue = this.value;
+            if (filterValue === 'lowToHigh') {
+                productos.sort((a, b) => a.price - b.price);
+            } else if (filterValue === 'highToLow') {
+                productos.sort((a, b) => b.price - a.price);
+            }
+            cargarProductos();
+        });
+
+        document.getElementById('searchProduct').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const filteredProducts = productos.filter(product => product.name.toLowerCase().includes(searchValue));
+            renderFilteredProducts(filteredProducts);
+        });
+
+        function renderFilteredProducts(filteredProducts) {
+            const container = document.getElementById("productosContainer");
+            container.innerHTML = '';
+            filteredProducts.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('producto');
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>Precio: $${product.price}</p>
+                    <div class="rating">${getStars(product.rating)}</div>
+                    <button onclick="agregarAlCarrito(${product.id})">Comprar</button>
+                `;
+                container.appendChild(productDiv);
+            });
+        }
+
+        cargarProductos();
+    </script>
+</body>
+</html>
